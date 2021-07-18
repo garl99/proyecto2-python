@@ -1,32 +1,68 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view />
-  </div>
+  <v-app>
+    <v-main>
+      <div class="links__container">
+        <a :class="{ active: currentOrder }" v-on:click="activeLink(true)"
+          >Hacer pedido</a
+        >
+        <a :class="{ active: currentReport }" v-on:click="activeLink(false)"
+          >Reportes</a
+        >
+      </div>
+      <router-view />
+    </v-main>
+  </v-app>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+<script>
+export default {
+  name: "App",
+
+  data() {
+    return {
+      currentOrder: false,
+      currentReport: false,
+    };
+  },
+  methods: {
+    activeLink(flag) {
+      if (flag) {
+        this.currentOrder = true;
+        this.currentReport = false;
+        this.$router.push("/orders");
+      } else {
+        this.currentReport = true;
+        this.currentOrder = false;
+        this.$router.push("/reports");
+      }
+    },
+  },
+};
+</script>
+
+<style scoped>
+.links__container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
+}
+.links__container > a {
+  margin: 0 10px;
+  display: inline-block;
+  padding: 5px 10px;
+  text-decoration: none;
+  cursor: pointer;
+  background-color: #3992eb;
+  color: white;
+  border-radius: 80px;
 }
 
-#nav {
-  padding: 30px;
+.links__container > a:hover {
+  background-color: #1976d2;
+}
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+.active {
+  background-color: #1976d2 !important;
 }
 </style>
