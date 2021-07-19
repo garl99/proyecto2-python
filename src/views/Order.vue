@@ -4,7 +4,7 @@
     <v-container>
       <v-row class="mt-5">
         <v-col class="mb-5 mt-5" cols="12">
-          <h1 class="text-center">Pedido</h1>
+          <h1 class="text-center">Resumen del pedido</h1>
           <v-btn
             style="margin-left: 20px"
             color="green"
@@ -16,39 +16,89 @@
             Agregar
           </v-btn>
           <div
+            v-if="order.length !== 0"
             class="mb-5 mt-5"
-            style="display: flex; justify-content: center; flex-wrap: wrap"
+            style="display: flex; flex-wrap: wrap"
           >
             <v-card
               v-for="item in order"
               :key="item.id"
               class="mx-5 mb-5"
               max-width="344"
-              style="border-radius: 10px"
+              elevation="2"
+              style="border-radius: 10px; position: relative"
               outlined
             >
               <v-list-item three-line>
                 <v-list-item-content>
                   <div class="text-overline mb-4">#{{ item.id }}</div>
                   <v-list-item-title class="text-h5 mb-1">
-                    Sandwich {{ item.size }}
+                    Sandwich {{ item.sizeLabel }}
                   </v-list-item-title>
                   <v-list-item-subtitle
-                    >Greyhound divisely hello coldly
-                    fonwderfully</v-list-item-subtitle
+                    ><strong>Ingredientes: </strong
+                    >{{
+                      arrayToString(item.ingredientsLabels)
+                    }}</v-list-item-subtitle
                   >
                 </v-list-item-content>
 
                 <v-list-item-avatar size="80">
-                  <v-img :src="link(item.size)"></v-img>
+                  <v-img :src="link(item.sizeLabel)"></v-img>
                 </v-list-item-avatar>
               </v-list-item>
 
-              <v-card-actions>
-                <v-btn outlined rounded small> Eliminar</v-btn>
+              <v-card-actions
+                style="display: flex; justify-content: space-between"
+              >
+                <v-btn icon @click="remove(item.id)">
+                  <v-icon color="red lighten-1">mdi-delete</v-icon>
+                </v-btn>
+                <p style="margin: 0">${{ item.subtotal }}</p>
               </v-card-actions>
             </v-card>
           </div>
+          <div
+            v-else
+            class="mt-5"
+            style="
+              width: 100%;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              flex-direction: column;
+            "
+          >
+            <img src="@/assets/icons8-sad.gif" alt="sad" width="150" />
+            <p style="font-size: 16px; font-weight: bold; text-align: center">
+              No ha agregado ningún sandwich
+            </p>
+          </div>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col
+          class="mb-5 mt-5"
+          cols="12"
+          style="display: flex; justify-content: flex-end"
+        >
+          <div style="display: flex; flex-direction: column">
+            <p style="margin: 0; font-size: 16px; color: #000">
+              <strong>Total</strong>
+            </p>
+            <span>$ {{ getTotal }}</span>
+          </div>
+        </v-col>
+      </v-row>
+      <v-row v-if="order.length !== 0">
+        <v-col
+          class="mb-5 mt-5"
+          cols="12"
+          style="display: flex; justify-content: center"
+        >
+          <v-btn color="green" elevation="2" dark rounded small @click="pay()">
+            Pagar
+          </v-btn>
         </v-col>
       </v-row>
     </v-container>
@@ -63,47 +113,27 @@ export default {
   components: {
     AddSandwich,
   },
+  created() {
+    EventBus.$on("order-confirm", (data, total) => {
+      this.setOrders(data);
+      this.total = total;
+      console.log(this.order);
+    });
+  },
   data() {
     return {
-      order: [
-        {
-          id: 1,
-          size: "Triple",
-          ingredientes: [
-            { name: "champiñon", value: 100 },
-            { name: "queso", value: 100 },
-          ],
-          subtotal: 1200,
-        },
-        {
-          id: 2,
-          size: "Doble",
-          ingredientes: [
-            { name: "champiñon", value: 100 },
-            { name: "queso", value: 100 },
-          ],
-          subtotal: 1200,
-        },
-        {
-          id: 3,
-          size: "Triple",
-          ingredientes: [
-            { name: "champiñon", value: 100 },
-            { name: "queso", value: 100 },
-          ],
-          subtotal: 1200,
-        },
-        {
-          id: 4,
-          size: "Individual",
-          ingredientes: [
-            { name: "champiñon", value: 100 },
-            { name: "queso", value: 100 },
-          ],
-          subtotal: 1200,
-        },
-      ],
+      order: [],
+      total: 0,
     };
+  },
+  computed: {
+    getTotal() {
+      let total = 0;
+      this.order.forEach((element) => {
+        total += element.subtotal;
+      });
+      return total;
+    },
   },
   methods: {
     link(size) {
@@ -116,7 +146,37 @@ export default {
       }
     },
     openModal() {
-      EventBus.$emit("open-add-sandwich");
+      this.currentTotal();
+      EventBus.$emit("open-add-sandwich", this.total);
+    },
+    arrayToString(ingredients) {
+      let ingredientsString = "";
+      if (ingredients.length === 0) {
+        return "Queso";
+      } else {
+        ingredients.forEach((element) => {
+          ingredientsString += element + ",";
+        });
+      }
+      return ingredientsString + "Queso";
+    },
+    setOrders(data) {
+      data.forEach((element) => {
+        this.order.push(element);
+      });
+    },
+    remove(id) {
+      this.order = this.order.filter((item) => item.id !== id);
+    },
+    currentTotal() {
+      let total = 0;
+      this.order.forEach((element) => {
+        total += element.subtotal;
+      });
+      this.total = total;
+    },
+    pay() {
+      console.log(this.order);
     },
   },
 };
