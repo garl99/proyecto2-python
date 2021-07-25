@@ -6,7 +6,7 @@
           >Hacer pedido</a
         >
         <a :class="{ active: currentReport }" v-on:click="activeLink(false)"
-          >Reportes</a
+          >Reporte</a
         >
       </div>
       <router-view />

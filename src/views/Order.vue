@@ -3,18 +3,56 @@
     <add-sandwich></add-sandwich>
     <v-container>
       <v-row class="mt-5">
+        <v-col cols="12">
+          <h1 class="text-center">Resumen del pedido</h1></v-col
+        >
+      </v-row>
+      <v-row class="mt-5">
+        <v-col class="mb-5" cols="12">
+          <h3>Datos del cliente</h3>
+          <v-form>
+            <v-container>
+              <v-row>
+                <v-col cols="12" sm="6" md="3">
+                  <v-text-field
+                    v-model="customer.dni"
+                    label="DNI"
+                    type="number"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="3">
+                  <v-text-field
+                    v-model="customer.name"
+                    label="Nombre"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="6" md="3">
+                  <v-text-field
+                    v-model="customer.lastname"
+                    label="Apellido"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-form>
+        </v-col>
+      </v-row>
+      <v-divider inset></v-divider>
+      <v-row class="mt-5">
         <v-col class="mb-5 mt-5" cols="12">
-          <h1 class="text-center">Resumen del pedido</h1>
-          <v-btn
-            style="margin-left: 20px"
-            color="green"
-            small
-            rounded
-            dark
-            @click="openModal()"
-          >
-            Agregar
-          </v-btn>
+          <div style="display: flex">
+            <h3>Sanwiches agregados</h3>
+            <v-btn
+              style="margin-left: 20px"
+              color="green"
+              small
+              rounded
+              dark
+              @click="openModal()"
+            >
+              Agregar
+            </v-btn>
+          </div>
           <div
             v-if="order.length !== 0"
             class="mb-5 mt-5"
@@ -124,6 +162,11 @@ export default {
     return {
       order: [],
       total: 0,
+      customer: {
+        dni: null,
+        name: null,
+        lastname: null,
+      },
     };
   },
   computed: {
@@ -176,7 +219,12 @@ export default {
       this.total = total;
     },
     pay() {
-      console.log(this.order);
+      let data = {
+        customer: this.customer,
+        orderDetail: this.order,
+        total: this.total,
+      };
+      console.log(data);
     },
   },
 };
