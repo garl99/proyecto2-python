@@ -219,12 +219,30 @@ export default {
       this.total = total;
     },
     pay() {
+      let date = new Date();
+      let dateString =
+        date.getFullYear() +
+        "-" +
+        (date.getMonth() + 1 < 10
+          ? "0" + (date.getMonth() + 1)
+          : date.getMonth() + 1) +
+        "-" +
+        (date.getDate() < 10 ? "0" + date.getDate() : date.getDate());
       let data = {
         customer: this.customer,
         orderDetail: this.order,
         total: this.total,
+        date: dateString,
       };
-      console.log(data);
+      var url = "http://localhost:5000/pedidos/";
+      this.$axios
+        .post(url, data)
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
   },
 };
