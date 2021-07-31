@@ -143,7 +143,7 @@ export default {
   inject: ["sizes", "ingredients"],
   created() {
     EventBus.$on("open-add-sandwich", (total) => {
-      this.total=total;
+      this.total = total;
       this.initDialog();
     });
   },
@@ -177,6 +177,7 @@ export default {
       sizesDialog: [],
       ingredientsDialog: [],
       sandwichesAdded: [],
+      cheese: null,
       total: 0,
     };
   },
@@ -189,17 +190,19 @@ export default {
       this.initIngredients();
     },
     initIngredients() {
-      var vue = this;
       this.ingredientsDialog = [];
-      this.ingredients.map(function (ing) {
-        let item = {
-          id: ing.id,
-          name: ing.name,
-          price: ing.price,
-          added: false,
-        };
-        vue.ingredientsDialog.push(item);
+      this.ingredients.map((ing) => {
+        if (ing.id != 8) {
+          let item = {
+            id: ing.id,
+            name: ing.name,
+            price: ing.price,
+            added: false,
+          };
+          this.ingredientsDialog.push(item);
+        }
       });
+      this.cheese = this.ingredients[7];
     },
     addSandwichToList() {
       let sandwich = {
@@ -225,18 +228,18 @@ export default {
             : ingredients.push(element.name);
         }
       });
+      flag === true
+        ? ingredients.push(this.cheese.id)
+        : ingredients.push("Queso");
+
       return ingredients;
     },
     arrayToString(ingredients) {
       let ingredientsString = "";
-      if (ingredients.length === 0) {
-        return "Queso";
-      } else {
-        ingredients.forEach((element) => {
-          ingredientsString += element + ",";
-        });
-      }
-      return ingredientsString + "Queso";
+      ingredients.forEach((element) => {
+        ingredientsString += element + ",";
+      });
+      return ingredientsString.substring(0, ingredientsString.length - 1);
     },
     link(size) {
       if (size === "Triple") {

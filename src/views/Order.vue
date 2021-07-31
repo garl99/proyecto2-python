@@ -3,6 +3,12 @@
     <add-sandwich></add-sandwich>
     <v-container>
       <v-row class="mt-5">
+        <v-col v-if="success" cols="4">
+          <v-alert dense text type="success"> Pedido creado con exito </v-alert>
+        </v-col>
+        <v-col v-if="error" cols="4">
+          <v-alert dense text type="error"> Ha ocurrido un error </v-alert>
+        </v-col>
         <v-col cols="12">
           <h1 class="text-center">Resumen del pedido</h1></v-col
         >
@@ -134,7 +140,15 @@
           cols="12"
           style="display: flex; justify-content: center"
         >
-          <v-btn color="green" elevation="2" dark rounded small @click="pay()">
+          <v-btn
+            color="green"
+            elevation="2"
+            :loading="loading"
+            dark
+            rounded
+            small
+            @click="pay()"
+          >
             Pagar
           </v-btn>
         </v-col>
@@ -167,6 +181,9 @@ export default {
         name: null,
         lastname: null,
       },
+      loading: false,
+      success: false,
+      error: false,
     };
   },
   computed: {
@@ -194,14 +211,10 @@ export default {
     },
     arrayToString(ingredients) {
       let ingredientsString = "";
-      if (ingredients.length === 0) {
-        return "Queso";
-      } else {
-        ingredients.forEach((element) => {
-          ingredientsString += element + ",";
-        });
-      }
-      return ingredientsString + "Queso";
+      ingredients.forEach((element) => {
+        ingredientsString += element + ",";
+      });
+      return ingredientsString.substring(0, ingredientsString.length - 1);
     },
     setOrders(data) {
       data.forEach((element) => {
@@ -219,6 +232,7 @@ export default {
       this.total = total;
     },
     pay() {
+      this.loading = true;
       let date = new Date();
       let dateString =
         date.getFullYear() +
@@ -234,15 +248,42 @@ export default {
         total: this.total,
         date: dateString,
       };
-      var url = "http://localhost:5000/pedidos/";
+      var url = "http://186.90.151.12:5000/pedidos/";
       this.$axios
         .post(url, data)
         .then((response) => {
+          this.loading = false;
+          this.notify(true);
+          this.resetValues();
           console.log(response);
         })
         .catch((error) => {
+          this.loading = false;
+          this.notify(false);
           console.log(error);
         });
+    },
+    notify(type) {
+      if (type) {
+        this.success = true;
+        setTimeout(() => {
+          this.success = false;
+        }, 5000);
+      } else {
+        this.error = true;
+        setTimeout(() => {
+          this.error = false;
+        }, 5000);
+      }
+    },
+    resetValues() {
+      this.order = [];
+      this.total = 0;
+      this.customer = {
+        dni: null,
+        name: null,
+        lastname: null,
+      };
     },
   },
 };

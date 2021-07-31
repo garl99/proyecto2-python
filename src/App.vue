@@ -75,6 +75,11 @@ export default {
           name: "Salchichon",
           price: 62.5,
         },
+        {
+          id: 8,
+          name: "Queso",
+          price: 0,
+        },
       ],
     };
   },
