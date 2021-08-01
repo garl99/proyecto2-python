@@ -4,16 +4,23 @@
       {{ title }}
       <v-spacer></v-spacer>
       <v-text-field
+        v-if="!this.dropdown"
         v-model="search"
         append-icon="mdi-magnify"
         label="Buscar"
         single-line
         hide-details
       ></v-text-field>
+      <v-select
+        v-else
+        :items="getItems()"
+        v-model="ingredientSelected"
+        label="Ingredientes"
+      ></v-select>
     </v-card-title>
     <v-data-table
       :headers="headers"
-      :items="general"
+      :items="!this.dropdown ? data : dataFilterByIngredient"
       :search="search"
     ></v-data-table>
   </v-card>
@@ -21,11 +28,29 @@
 
 <script>
 export default {
-  props: ["general", "headers", "title"],
+  inject: ["ingredients"],
+  props: ["data", "headers", "title", "dropdown"],
   data() {
     return {
       search: "",
+      ingredientSelected: "Queso",
     };
+  },
+  computed: {
+    dataFilterByIngredient() {
+      return this.data !== undefined
+        ? this.data[0][this.ingredientSelected.toLowerCase()]
+        : [];
+    },
+  },
+  methods: {
+    getItems() {
+      let items = [];
+      this.ingredients.map((ing) => {
+        items.push(ing.name);
+      });
+      return items;
+    },
   },
 };
 </script>

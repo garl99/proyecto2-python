@@ -35,36 +35,41 @@
             <v-tabs-items v-model="tabs">
               <v-tab-item :value="'tab-General'">
                 <the-table
-                  :general="sandwiches"
+                  :data="reports.General"
                   :headers="headers"
+                  :dropdown="false"
                   title="General"
                 ></the-table
               ></v-tab-item>
               <v-tab-item :value="'tab-x Día'">
                 <the-table
-                  :general="sandwiches"
+                  :data="reports.Day"
                   :headers="headers"
+                  :dropdown="false"
                   title="Por día"
                 ></the-table>
               </v-tab-item>
               <v-tab-item :value="'tab-x Tamaño de Sand.'">
                 <the-table
-                  :general="sandwiches"
+                  :data="reports.Size"
                   :headers="headers"
+                  :dropdown="false"
                   title="Por tamaño de sandwich"
                 ></the-table>
               </v-tab-item>
               <v-tab-item :value="'tab-x Ingredientes'">
                 <the-table
-                  :general="sandwiches"
+                  :data="reports.Ingredients"
                   :headers="headers"
+                  :dropdown="true"
                   title="Por ingredientes"
                 ></the-table>
               </v-tab-item>
               <v-tab-item :value="'tab-x Clientes'">
                 <the-table
-                  :general="sandwiches"
+                  :data="reports.Clients"
                   :headers="headers"
+                  :dropdown="false"
                   title="Por clientes"
                 ></the-table>
               </v-tab-item>
@@ -78,12 +83,14 @@
 
 <script>
 import TheTable from "./tables/TheTable.vue";
+//import reports from "../data/pedidos.js";
+
 export default {
   components: {
     TheTable,
   },
   created() {
-    console.log(this.sandwiches);
+    this.getReports();
   },
   data: () => ({
     items: [
@@ -94,72 +101,7 @@ export default {
       "x Clientes",
     ],
     tabs: "tab-General",
-    sandwiches: [
-      {
-        id: 12345,
-        customer: "Gabriel Romero",
-        size: "triple",
-        ingredients: "queso,pepperoni,jamon",
-        total: 400,
-        date: "21/04/2021",
-      },
-      {
-        id: 12346,
-        customer: "Daniel Diaz",
-        size: "doble",
-        ingredients: "queso,jamon",
-        total: 400,
-        date: "20/07/2021",
-      },
-      {
-        id: 12347,
-        customer: "Ricardo Perez",
-        size: "triple",
-        ingredients: "queso,pimenton,jamon",
-        total: 400,
-        date: "20/06/2021",
-      },
-      {
-        id: 12348,
-        customer: "Michael Amariscua",
-        size: "individual",
-        ingredients: "queso,aceitunas",
-        total: 400,
-        date: "21/05/2021",
-      },
-      {
-        id: 12349,
-        customer: "Gabriel Romero",
-        size: "triple",
-        ingredients: "queso,pepperoni,jamon",
-        total: 400,
-        date: "21/03/2021",
-      },
-      {
-        id: 12350,
-        customer: "Daniel Diaz",
-        size: "doble",
-        ingredients: "queso,pepperoni,jamon",
-        total: 400,
-        date: "20/07/2021",
-      },
-      {
-        id: 12351,
-        customer: "Ricardo Perez",
-        size: "triple",
-        ingredients: "queso,salchichon,jamon",
-        total: 400,
-        date: "10/03/2021",
-      },
-      {
-        id: 12352,
-        customer: "Michael Amariscua",
-        size: "individual",
-        ingredients: "queso,salchichon",
-        total: 400,
-        date: "15/02/2021",
-      },
-    ],
+    reports: {},
     headers: [
       {
         text: "ID Venta",
@@ -173,5 +115,23 @@ export default {
       { text: "Fecha", value: "date" },
     ],
   }),
+  methods: {
+    getReports() {
+      /*setTimeout(() => {
+        let reportsObject = reports[0];
+        this.reports = { ...reportsObject };
+      }, 5000);*/
+      var url = "http://186.90.151.12:5000/pedidos/";
+      this.$axios
+        .get(url)
+        .then((response) => {
+          let reportsObject = response.data[0];
+          this.reports = { ...reportsObject };
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+  },
 };
 </script>
