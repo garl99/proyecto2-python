@@ -47,7 +47,7 @@ export default {
         },
         {
           id: 2,
-          name: "Champiñones",
+          name: "Champiñon",
           price: 30,
         },
         {
@@ -62,7 +62,7 @@ export default {
         },
         {
           id: 5,
-          name: "Aceitunas",
+          name: "Aceituna",
           price: 57.5,
         },
         {

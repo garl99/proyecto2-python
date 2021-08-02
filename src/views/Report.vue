@@ -121,11 +121,11 @@ export default {
         let reportsObject = reports[0];
         this.reports = { ...reportsObject };
       }, 5000);*/
-      var url = "http://186.90.151.12:5000/pedidos/";
+      var url = "http://190.203.203.128:5000/pedidos/";
       this.$axios
         .get(url)
         .then((response) => {
-          let reportsObject = response.data[0];
+          let reportsObject = response.data.result[0];
           this.reports = { ...reportsObject };
         })
         .catch((error) => {

@@ -38,8 +38,8 @@ export default {
   },
   computed: {
     dataFilterByIngredient() {
-      return this.data !== undefined
-        ? this.data[0][this.ingredientSelected.toLowerCase()]
+      return this.data[0].agrupado !== undefined
+        ? this.data[0].agrupado[this.ingredientSelected.toLowerCase().replaceAll(" ","_")]
         : [];
     },
   },
