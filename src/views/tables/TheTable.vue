@@ -19,6 +19,7 @@
       ></v-select>
     </v-card-title>
     <v-data-table
+      :loading="loading"
       :headers="headers"
       :items="!this.dropdown ? data : dataFilterByIngredient"
       :search="search"
@@ -29,7 +30,7 @@
 <script>
 export default {
   inject: ["ingredients"],
-  props: ["data", "headers", "title", "dropdown"],
+  props: ["data", "headers", "title", "dropdown", "loading"],
   data() {
     return {
       search: "",
@@ -39,7 +40,9 @@ export default {
   computed: {
     dataFilterByIngredient() {
       return this.data[0].agrupado !== undefined
-        ? this.data[0].agrupado[this.ingredientSelected.toLowerCase().replaceAll(" ","_")]
+        ? this.data[0].agrupado[
+            this.ingredientSelected.toLowerCase().replaceAll(" ", "_")
+          ]
         : [];
     },
   },

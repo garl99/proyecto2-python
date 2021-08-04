@@ -248,7 +248,7 @@ export default {
         total: this.total,
         date: dateString,
       };
-      var url = "http://190.203.203.128:5000/pedidos/";
+      var url = "http://201.248.4.165:5000/pedidos/";
       this.$axios
         .post(url, data)
         .then((response) => {

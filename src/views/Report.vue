@@ -39,6 +39,7 @@
                   :headers="headers"
                   :dropdown="false"
                   title="General"
+                  :loading="loading"
                 ></the-table
               ></v-tab-item>
               <v-tab-item :value="'tab-x Día'">
@@ -47,6 +48,7 @@
                   :headers="headers"
                   :dropdown="false"
                   title="Por día"
+                  :loading="loading"
                 ></the-table>
               </v-tab-item>
               <v-tab-item :value="'tab-x Tamaño de Sand.'">
@@ -55,6 +57,7 @@
                   :headers="headers"
                   :dropdown="false"
                   title="Por tamaño de sandwich"
+                  :loading="loading"
                 ></the-table>
               </v-tab-item>
               <v-tab-item :value="'tab-x Ingredientes'">
@@ -63,6 +66,7 @@
                   :headers="headers"
                   :dropdown="true"
                   title="Por ingredientes"
+                  :loading="loading"
                 ></the-table>
               </v-tab-item>
               <v-tab-item :value="'tab-x Clientes'">
@@ -71,6 +75,7 @@
                   :headers="headers"
                   :dropdown="false"
                   title="Por clientes"
+                  :loading="loading"
                 ></the-table>
               </v-tab-item>
             </v-tabs-items>
@@ -83,6 +88,7 @@
 
 <script>
 import TheTable from "./tables/TheTable.vue";
+import { EventBus } from "@/event-bus";
 //import reports from "../data/pedidos.js";
 
 export default {
@@ -114,23 +120,32 @@ export default {
       { text: "Total", value: "total" },
       { text: "Fecha", value: "date" },
     ],
+    loading: false,
   }),
   methods: {
     getReports() {
+      this.loading = true;
       /*setTimeout(() => {
         let reportsObject = reports[0];
         this.reports = { ...reportsObject };
       }, 5000);*/
-      var url = "http://190.203.203.128:5000/pedidos/";
+      var url = "http://201.248.4.165:5000/pedidos/";
       this.$axios
         .get(url)
         .then((response) => {
           let reportsObject = response.data.result[0];
           this.reports = { ...reportsObject };
+          this.loading = false;
         })
         .catch((error) => {
           console.log(error);
         });
+    },
+    isThereData() {
+      console.log(this.reports !== {});
+      if (this.reports !== {}) {
+        EventBus.$emit("fetch-data-done");
+      }
     },
   },
 };
